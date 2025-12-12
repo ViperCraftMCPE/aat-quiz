@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Direct vs Indirect Costs — Learn → Test</title>
+
   <style>
     :root{
       /* Notion-ish light theme */
@@ -20,11 +21,22 @@
 
       --radius:12px;
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+
+      /* ✅ Sticky header scroll offset (fix for cut-off when auto-scrolling) */
+      --header-offset: 72px; /* change to 64px or 80px if needed */
     }
 
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
     body{margin:0; font-family:var(--font); color:var(--text); background:var(--bg);}
+
+    /* ✅ Apply scroll offset to anchors/sections/cards */
+    [id^="q-"],
+    #test,
+    .section,
+    [id^="s"]{
+      scroll-margin-top: var(--header-offset);
+    }
 
     .top{
       position:sticky; top:0; z-index:20;
@@ -183,8 +195,8 @@
     .endnote{display:none; margin-top:12px; color:var(--muted); font-size:13px;}
   </style>
 </head>
-<body>
 
+<body>
   <!-- Sticky top progress (quiz progress updates as you answer) -->
   <div class="top">
     <div class="topinner">
@@ -210,7 +222,7 @@
       <a href="#test">Test section</a>
     </div>
 
-    <!-- LEARN (Notion-like cards) -->
+    <!-- LEARN -->
     <section class="section" id="learn">
       <h2>Learn</h2>
 
@@ -311,181 +323,180 @@
     </section>
   </div>
 
-<script>
-  // === QUIZ QUESTIONS (edit these as you build the course) ===
-  const QUESTIONS = [
-    {
-      tag: "Basics",
-      q: "A cost is best defined as:",
-      options: [
-        "The price a customer pays for a product",
-        "The value of resources used to produce goods or provide services",
-        "Only the wages paid to staff",
-        "Only the materials used in production"
-      ],
-      correct: 1,
-      explain: "A cost is the value of resources used by a business to produce goods or provide services."
-    },
-    {
-      tag: "Direct costs",
-      q: "Which statement best describes a direct cost?",
-      options: [
-        "Supports the whole business and must be shared across products",
-        "Can be linked clearly and directly to a specific product, service, or job",
-        "Always stays the same regardless of output",
-        "Is only found in manufacturing businesses"
-      ],
-      correct: 1,
-      explain: "Direct costs can be traced clearly to a specific product/service/job."
-    },
-    {
-      tag: "Indirect costs",
-      q: "Which of the following is most likely an indirect cost?",
-      options: [
-        "Raw materials used in production",
-        "Components used to assemble a product",
-        "Rent for the building",
-        "Wages of staff working directly on a job"
-      ],
-      correct: 2,
-      explain: "Rent supports the premises and can’t be traced to one specific product/job, so it’s indirect."
-    },
-    {
-      tag: "Why it matters",
-      q: "Why is classifying costs as direct/indirect important?",
-      options: [
-        "So businesses can avoid paying rent",
-        "Because indirect costs must be allocated/spread across products and accurate classification supports pricing",
-        "So direct costs can be ignored when budgeting",
-        "Because indirect costs are always zero in services"
-      ],
-      correct: 1,
-      explain: "Indirect costs need allocating, and accurate classification supports pricing, profitability, and budgeting."
+  <script>
+    // === QUIZ QUESTIONS (edit these as you build the course) ===
+    const QUESTIONS = [
+      {
+        tag: "Basics",
+        q: "A cost is best defined as:",
+        options: [
+          "The price a customer pays for a product",
+          "The value of resources used to produce goods or provide services",
+          "Only the wages paid to staff",
+          "Only the materials used in production"
+        ],
+        correct: 1,
+        explain: "A cost is the value of resources used by a business to produce goods or provide services."
+      },
+      {
+        tag: "Direct costs",
+        q: "Which statement best describes a direct cost?",
+        options: [
+          "Supports the whole business and must be shared across products",
+          "Can be linked clearly and directly to a specific product, service, or job",
+          "Always stays the same regardless of output",
+          "Is only found in manufacturing businesses"
+        ],
+        correct: 1,
+        explain: "Direct costs can be traced clearly to a specific product/service/job."
+      },
+      {
+        tag: "Indirect costs",
+        q: "Which of the following is most likely an indirect cost?",
+        options: [
+          "Raw materials used in production",
+          "Components used to assemble a product",
+          "Rent for the building",
+          "Wages of staff working directly on a job"
+        ],
+        correct: 2,
+        explain: "Rent supports the premises and can’t be traced to one specific product/job, so it’s indirect."
+      },
+      {
+        tag: "Why it matters",
+        q: "Why is classifying costs as direct/indirect important?",
+        options: [
+          "So businesses can avoid paying rent",
+          "Because indirect costs must be allocated/spread across products and accurate classification supports pricing",
+          "So direct costs can be ignored when budgeting",
+          "Because indirect costs are always zero in services"
+        ],
+        correct: 1,
+        explain: "Indirect costs need allocating, and accurate classification supports pricing, profitability, and budgeting."
+      }
+    ];
+
+    const el = {
+      pill: document.getElementById("pill"),
+      bar: document.getElementById("bar"),
+      cards: document.getElementById("cards"),
+      endnote: document.getElementById("endnote"),
+      startTestBtn: document.getElementById("startTestBtn"),
+      restartBtn: document.getElementById("restartBtn")
+    };
+
+    const user = Array(QUESTIONS.length).fill(null);
+    const unlocked = Array(QUESTIONS.length).fill(false);
+    unlocked[0] = true;
+
+    function updateProgress(){
+      const done = user.filter(v => v !== null).length;
+      el.pill.textContent = `Quiz: ${done} / ${QUESTIONS.length}`;
+      el.bar.style.width = `${(done / QUESTIONS.length) * 100}%`;
     }
-  ];
 
-  const el = {
-    pill: document.getElementById("pill"),
-    bar: document.getElementById("bar"),
-    cards: document.getElementById("cards"),
-    endnote: document.getElementById("endnote"),
-    startTestBtn: document.getElementById("startTestBtn"),
-    restartBtn: document.getElementById("restartBtn")
-  };
+    // Uses scroll-margin-top (CSS) so header is accounted for.
+    function scrollToCard(i){
+      const node = document.getElementById(`q-${i}`);
+      if (node) node.scrollIntoView({behavior:"smooth", block:"start"});
+    }
 
-  const user = Array(QUESTIONS.length).fill(null);
-  const unlocked = Array(QUESTIONS.length).fill(false);
-  unlocked[0] = true;
+    function render(){
+      el.cards.innerHTML = "";
+      el.endnote.style.display = "none";
 
-  function updateProgress(){
-    const done = user.filter(v => v !== null).length;
-    el.pill.textContent = `Quiz: ${done} / ${QUESTIONS.length}`;
-    el.bar.style.width = `${(done / QUESTIONS.length) * 100}%`;
-  }
+      QUESTIONS.forEach((q, i) => {
+        const card = document.createElement("div");
+        card.className = "card" + (unlocked[i] ? "" : " locked");
+        card.id = `q-${i}`;
 
-  function scrollToCard(i){
-    const node = document.getElementById(`q-${i}`);
-    if (node) node.scrollIntoView({behavior:"smooth", block:"start"});
-  }
+        card.innerHTML = `
+          <div class="quiz-meta">
+            <div>${q.tag ? q.tag + " • " : ""}Question ${i+1} of ${QUESTIONS.length}</div>
+            <div>${unlocked[i] ? (user[i]===null ? "Answer to continue" : "Answered") : "Locked"}</div>
+          </div>
+          <p class="q">${q.q}</p>
+          <div class="answers" id="a-${i}"></div>
+          <div class="explain" id="e-${i}"></div>
+        `;
 
-  function render(){
-    el.cards.innerHTML = "";
-    el.endnote.style.display = "none";
+        el.cards.appendChild(card);
 
-    QUESTIONS.forEach((q, i) => {
-      const card = document.createElement("div");
-      card.className = "card" + (unlocked[i] ? "" : " locked");
-      card.id = `q-${i}`;
+        const answersEl = document.getElementById(`a-${i}`);
+        const explainEl = document.getElementById(`e-${i}`);
 
-      card.innerHTML = `
-        <div class="quiz-meta">
-          <div>${q.tag ? q.tag + " • " : ""}Question ${i+1} of ${QUESTIONS.length}</div>
-          <div>${unlocked[i] ? (user[i]===null ? "Answer to continue" : "Answered") : "Locked"}</div>
-        </div>
-        <p class="q">${q.q}</p>
-        <div class="answers" id="a-${i}"></div>
-        <div class="explain" id="e-${i}"></div>
-      `;
+        q.options.forEach((opt, idx) => {
+          const a = document.createElement("div");
+          a.className = "ans";
+          a.innerHTML = `<div class="radio"><div class="dot"></div></div><div class="label">${opt}</div>`;
 
-      el.cards.appendChild(card);
+          a.addEventListener("click", () => {
+            if (!unlocked[i]) return;
+            if (user[i] !== null) return; // one attempt per card
 
-      const answersEl = document.getElementById(`a-${i}`);
-      const explainEl = document.getElementById(`e-${i}`);
+            user[i] = idx;
 
-      q.options.forEach((opt, idx) => {
-        const a = document.createElement("div");
-        a.className = "ans";
-        a.innerHTML = `<div class="radio"><div class="dot"></div></div><div class="label">${opt}</div>`;
+            // mark correct/wrong
+            [...answersEl.children].forEach((node, j) => {
+              if (j === q.correct) node.classList.add("correct");
+              if (j === idx && idx !== q.correct) node.classList.add("wrong");
+              if (j === idx) node.classList.add("selected");
+            });
 
-        a.addEventListener("click", () => {
-          if (!unlocked[i]) return;
-          if (user[i] !== null) return; // one attempt per card in this version
+            if (q.explain){
+              explainEl.textContent = q.explain;
+              explainEl.classList.add("show");
+            }
 
-          user[i] = idx;
-
-          // mark correct/wrong
-          [...answersEl.children].forEach((node, j) => {
-            if (j === q.correct) node.classList.add("correct");
-            if (j === idx && idx !== q.correct) node.classList.add("wrong");
-            if (j === idx) node.classList.add("selected");
+            // unlock next + move down
+            if (i + 1 < QUESTIONS.length){
+              unlocked[i+1] = true;
+              updateProgress();
+              render();
+              setTimeout(() => scrollToCard(i+1), 140);
+            } else {
+              updateProgress();
+              el.bar.style.width = "100%";
+              el.endnote.style.display = "block";
+            }
           });
 
+          answersEl.appendChild(a);
+        });
+
+        // re-apply answered styling after re-render
+        if (user[i] !== null){
+          [...answersEl.children].forEach((node, j) => {
+            if (j === q.correct) node.classList.add("correct");
+            if (j === user[i] && user[i] !== q.correct) node.classList.add("wrong");
+            if (j === user[i]) node.classList.add("selected");
+          });
           if (q.explain){
             explainEl.textContent = q.explain;
             explainEl.classList.add("show");
           }
-
-          // unlock next + move down
-          if (i + 1 < QUESTIONS.length){
-            unlocked[i+1] = true;
-            updateProgress();
-            render();
-            setTimeout(() => scrollToCard(i+1), 140);
-          } else {
-            updateProgress();
-            el.bar.style.width = "100%";
-            el.endnote.style.display = "block";
-          }
-        });
-
-        answersEl.appendChild(a);
+        }
       });
 
-      // re-apply answered styling after re-render
-      if (user[i] !== null){
-        [...answersEl.children].forEach((node, j) => {
-          if (j === q.correct) node.classList.add("correct");
-          if (j === user[i] && user[i] !== q.correct) node.classList.add("wrong");
-          if (j === user[i]) node.classList.add("selected");
-        });
-        if (q.explain){
-          explainEl.textContent = q.explain;
-          explainEl.classList.add("show");
-        }
-      }
+      updateProgress();
+    }
+
+    function restart(){
+      for (let i=0;i<user.length;i++) user[i]=null;
+      for (let i=0;i<unlocked.length;i++) unlocked[i]=false;
+      unlocked[0]=true;
+      render();
+      scrollToCard(0);
+    }
+
+    el.startTestBtn.addEventListener("click", () => {
+      document.getElementById("test").scrollIntoView({behavior:"smooth", block:"start"});
+      setTimeout(() => scrollToCard(0), 150);
     });
 
-    updateProgress();
-  }
+    el.restartBtn.addEventListener("click", restart);
 
-  function restart(){
-    for (let i=0;i<user.length;i++) user[i]=null;
-    for (let i=0;i<unlocked.length;i++) unlocked[i]=false;
-    unlocked[0]=true;
     render();
-    scrollToCard(0);
-  }
-
-  el.startTestBtn.addEventListener("click", () => {
-    document.getElementById("test").scrollIntoView({behavior:"smooth", block:"start"});
-    setTimeout(() => scrollToCard(0), 150);
-  });
-
-  el.restartBtn.addEventListener("click", restart);
-
-  render();
-</script>
+  </script>
 </body>
 </html>
-
-
