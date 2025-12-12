@@ -2,494 +2,470 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Notion Quiz Embed</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lesson — Learn → Test</title>
   <style>
     :root{
-      --bg: #0b0f19;
-      --card: rgba(255,255,255,0.06);
-      --card2: rgba(255,255,255,0.09);
-      --text: rgba(255,255,255,0.92);
-      --muted: rgba(255,255,255,0.65);
-      --border: rgba(255,255,255,0.12);
-      --good: #22c55e;
-      --bad: #ef4444;
-      --accent: #8b5cf6;
+      --bg:#0b0f19;
+      --paper:rgba(255,255,255,.06);
+      --paper2:rgba(255,255,255,.085);
+      --border:rgba(255,255,255,.12);
+      --text:rgba(255,255,255,.92);
+      --muted:rgba(255,255,255,.65);
+      --accent:#8b5cf6;
       --accent2:#22d3ee;
-      --shadow: 0 16px 40px rgba(0,0,0,0.35);
-      --radius: 18px;
-      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      --good:#22c55e;
+      --bad:#ef4444;
+      --radius:18px;
+      --shadow:0 18px 48px rgba(0,0,0,.38);
+      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Apple Color Emoji","Segoe UI Emoji";
     }
+
     *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
     body{
-      margin:0;
-      font-family:var(--font);
-      color:var(--text);
-      background: radial-gradient(1200px 600px at 20% 10%, rgba(139,92,246,0.25), transparent 60%),
-                  radial-gradient(900px 500px at 80% 0%, rgba(34,211,238,0.18), transparent 55%),
-                  linear-gradient(180deg, #050814, #070a12 40%, #050814);
+      margin:0; font-family:var(--font); color:var(--text);
+      background:
+        radial-gradient(1200px 650px at 20% 0%, rgba(139,92,246,.22), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(34,211,238,.16), transparent 55%),
+        linear-gradient(180deg, #050814, #070a12 45%, #050814);
       min-height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
     }
-    .wrap{
-      width:min(820px, 100%);
-    }
-    .card{
-      background: linear-gradient(180deg, var(--card), rgba(255,255,255,0.03));
+
+    .wrap{width:min(980px, 100%); margin:0 auto; padding:22px 16px 64px;}
+    .shell{
       border:1px solid var(--border);
+      background:linear-gradient(180deg, var(--paper), rgba(255,255,255,.03));
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       overflow:hidden;
     }
-    .header{
-      padding:18px 18px 14px 18px;
-      display:flex;
-      gap:14px;
-      align-items:center;
-      justify-content:space-between;
+
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:10;
       border-bottom:1px solid var(--border);
-      background: linear-gradient(90deg, rgba(139,92,246,0.14), rgba(34,211,238,0.10));
+      background:linear-gradient(90deg, rgba(139,92,246,.14), rgba(34,211,238,.10));
+      backdrop-filter: blur(10px);
     }
-    .title{
-      display:flex; flex-direction:column; gap:4px;
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      gap:12px; padding:14px 16px;
     }
-    .title h1{
-      font-size:16px;
-      margin:0;
-      letter-spacing:0.2px;
-      font-weight:650;
-    }
-    .title p{
-      margin:0;
-      font-size:12.5px;
-      color:var(--muted);
-    }
+    .brand{display:flex; flex-direction:column; gap:4px}
+    .brand h1{margin:0; font-size:15px; font-weight:750; letter-spacing:.2px}
+    .brand p{margin:0; font-size:12.5px; color:var(--muted)}
     .pill{
-      font-size:12px;
-      color:rgba(255,255,255,0.8);
+      font-size:12px; color:rgba(255,255,255,.82);
       border:1px solid var(--border);
-      background: rgba(255,255,255,0.06);
-      padding:6px 10px;
-      border-radius:999px;
-      white-space:nowrap;
+      background:rgba(255,255,255,.06);
+      padding:6px 10px; border-radius:999px; white-space:nowrap;
     }
-    .content{ padding:18px; }
     .progress{
       height:10px;
-      background: rgba(255,255,255,0.06);
-      border:1px solid var(--border);
-      border-radius:999px;
-      overflow:hidden;
-      margin-bottom:14px;
+      border-top:1px solid var(--border);
+      background:rgba(255,255,255,.05);
     }
     .bar{
-      height:100%;
-      width:0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-      transition: width 350ms ease;
+      height:100%; width:0%;
+      background:linear-gradient(90deg, var(--accent), var(--accent2));
+      transition:width 320ms ease;
     }
-    .q-meta{
-      display:flex; gap:10px; align-items:center; justify-content:space-between;
-      margin-bottom:10px;
-    }
-    .q-meta .small{ font-size:12.5px; color:var(--muted); }
-    .question{
-      margin:0 0 14px 0;
-      font-size:18px;
-      line-height:1.35;
-      font-weight:650;
-    }
-    .answers{
-      display:grid;
-      gap:10px;
-      margin-bottom:14px;
-    }
-    .ans{
-      display:flex;
-      align-items:flex-start;
-      gap:10px;
-      padding:12px 12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.05);
-      cursor:pointer;
-      transition: transform 80ms ease, background 120ms ease, border-color 120ms ease;
-    }
-    .ans:hover{ background: rgba(255,255,255,0.075); }
-    .ans:active{ transform: scale(0.995); }
-    .radio{
-      margin-top:2px;
-      width:18px; height:18px;
-      border-radius:999px;
-      border:1.5px solid rgba(255,255,255,0.35);
-      display:flex; align-items:center; justify-content:center;
-      flex:0 0 auto;
-    }
-    .dot{
-      width:10px; height:10px; border-radius:999px;
-      background: transparent;
-    }
-    .ans.selected{
-      border-color: rgba(139,92,246,0.75);
-      background: rgba(139,92,246,0.14);
-    }
-    .ans.selected .radio{ border-color: rgba(139,92,246,0.9); }
-    .ans.selected .dot{ background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-    .ans.correct{
-      border-color: rgba(34,197,94,0.85);
-      background: rgba(34,197,94,0.14);
-    }
-    .ans.wrong{
-      border-color: rgba(239,68,68,0.85);
-      background: rgba(239,68,68,0.12);
-    }
-    .label{
-      font-size:15px;
-      line-height:1.35;
-    }
-    .explain{
-      margin-top:12px;
-      padding:12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.045);
-      color:rgba(255,255,255,0.84);
-      font-size:13.5px;
-      line-height:1.45;
-      display:none;
-    }
-    .explain.show{ display:block; }
-    .actions{
-      display:flex;
-      gap:10px;
-      justify-content:space-between;
-      align-items:center;
-      margin-top:14px;
-      flex-wrap:wrap;
-    }
-    button{
-      appearance:none;
-      border:1px solid var(--border);
-      background: rgba(255,255,255,0.06);
-      color:var(--text);
-      padding:10px 12px;
-      border-radius:12px;
-      font-weight:650;
-      cursor:pointer;
-      transition: background 120ms ease, border-color 120ms ease;
-    }
-    button:hover{ background: rgba(255,255,255,0.085); }
-    button.primary{
-      border-color: rgba(139,92,246,0.55);
-      background: linear-gradient(90deg, rgba(139,92,246,0.22), rgba(34,211,238,0.14));
-    }
-    button.primary:disabled{
-      opacity:0.55;
-      cursor:not-allowed;
-    }
-    .ghost{
-      border-color: transparent;
-      background: transparent;
-      color: rgba(255,255,255,0.75);
-      padding-left:6px;
-      padding-right:6px;
-    }
-    .result{
-      display:none;
-      padding:18px;
-    }
-    .result.show{ display:block; }
-    .score{
-      font-size:26px;
-      font-weight:800;
-      margin:0 0 6px 0;
-    }
-    .sub{
-      margin:0 0 14px 0;
-      color:var(--muted);
-      font-size:13.5px;
-    }
-    .review{
-      display:grid;
-      gap:10px;
-      margin-top:12px;
-    }
-    .row{
-      padding:12px;
-      border:1px solid var(--border);
-      border-radius:14px;
-      background: rgba(255,255,255,0.045);
-    }
-    .row .q{
-      margin:0 0 6px 0;
-      font-weight:700;
-      font-size:13.5px;
-    }
-    .row .a{
-      margin:0;
-      font-size:13px;
-      color:rgba(255,255,255,0.8);
-      line-height:1.4;
-    }
-    .tag{
-      display:inline-block;
-      margin-left:8px;
-      font-size:11px;
-      padding:2px 8px;
-      border-radius:999px;
-      border:1px solid var(--border);
-      color:rgba(255,255,255,0.75);
-      background: rgba(255,255,255,0.05);
-      vertical-align:middle;
-    }
-    .tag.good{ border-color: rgba(34,197,94,0.45); }
-    .tag.bad{ border-color: rgba(239,68,68,0.45); }
 
-    /* Notion embed friendliness */
-    @media (prefers-color-scheme: light){
-      /* keep dark aesthetic anyway; Notion embed backgrounds vary */
+    /* Content */
+    .content{padding:18px 18px 24px}
+    .section{padding:6px 0 0}
+    .section-title{
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+      margin:8px 0 12px;
     }
+    .section-title h2{margin:0; font-size:14px; letter-spacing:.3px; color:rgba(255,255,255,.82); font-weight:800; text-transform:uppercase}
+    .actions{display:flex; gap:10px; flex-wrap:wrap}
+
+    button{
+      appearance:none; border:1px solid var(--border);
+      background:rgba(255,255,255,.06);
+      color:var(--text); font-weight:750;
+      padding:10px 12px; border-radius:12px; cursor:pointer;
+      transition:background 120ms ease, border-color 120ms ease;
+    }
+    button:hover{background:rgba(255,255,255,.085)}
+    button.primary{
+      border-color:rgba(139,92,246,.55);
+      background:linear-gradient(90deg, rgba(139,92,246,.22), rgba(34,211,238,.14));
+    }
+
+    /* Notion-ish typography */
+    .article h3{margin:18px 0 8px; font-size:18px; font-weight:850}
+    .article p{margin:8px 0; color:rgba(255,255,255,.86); line-height:1.6; font-size:15px}
+    .article ul{margin:8px 0 8px 18px; color:rgba(255,255,255,.84); line-height:1.6}
+    .article code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      font-size: 13px;
+      padding:2px 6px; border-radius:10px;
+      background:rgba(255,255,255,.06); border:1px solid var(--border);
+    }
+
+    .callout{
+      margin:14px 0; padding:12px 12px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      border-radius:14px;
+      display:flex; gap:10px;
+    }
+    .emoji{width:22px; text-align:center; flex:0 0 auto}
+    .callout b{color:rgba(255,255,255,.92)}
+    .table{
+      width:100%;
+      border-collapse:separate; border-spacing:0;
+      border:1px solid var(--border);
+      border-radius:14px; overflow:hidden;
+      margin:12px 0;
+      background:rgba(255,255,255,.03);
+    }
+    .table th,.table td{
+      padding:10px 10px;
+      border-bottom:1px solid var(--border);
+      border-right:1px solid var(--border);
+      font-size:13.5px; line-height:1.45;
+      color:rgba(255,255,255,.84);
+      vertical-align:top;
+    }
+    .table th{background:rgba(255,255,255,.05); font-weight:800}
+    .table tr:last-child td{border-bottom:none}
+    .table td:last-child,.table th:last-child{border-right:none}
+
+    /* Test cards */
+    .cards{display:grid; gap:12px; margin-top:10px}
+    .card{
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.045);
+      border-radius:16px;
+      padding:14px;
+    }
+    .card.locked{
+      opacity:.55;
+      filter: blur(.2px);
+    }
+    .card-head{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+    }
+    .meta{font-size:12.5px; color:var(--muted)}
+    .q{margin:0; font-size:16px; font-weight:850; line-height:1.35}
+    .answers{display:grid; gap:10px; margin-top:10px}
+    .ans{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.05);
+      cursor:pointer;
+      transition:background 120ms ease, border-color 120ms ease;
+    }
+    .ans:hover{background:rgba(255,255,255,.075)}
+    .radio{margin-top:2px; width:18px; height:18px; border-radius:999px; border:1.5px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center}
+    .dot{width:10px; height:10px; border-radius:999px; background:transparent}
+    .ans.selected{border-color:rgba(139,92,246,.75); background:rgba(139,92,246,.14)}
+    .ans.selected .radio{border-color:rgba(139,92,246,.9)}
+    .ans.selected .dot{background:linear-gradient(90deg, var(--accent), var(--accent2))}
+    .ans.correct{border-color:rgba(34,197,94,.85); background:rgba(34,197,94,.14)}
+    .ans.wrong{border-color:rgba(239,68,68,.85); background:rgba(239,68,68,.12)}
+    .label{font-size:14.8px; line-height:1.35; color:rgba(255,255,255,.9)}
+    .explain{
+      margin-top:10px;
+      padding:11px 12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:rgba(255,255,255,.04);
+      color:rgba(255,255,255,.82);
+      font-size:13.5px; line-height:1.5;
+      display:none;
+    }
+    .explain.show{display:block}
+
+    .footer-note{margin-top:16px; color:var(--muted); font-size:12.5px; line-height:1.45}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="card">
-      <div class="header">
-        <div class="title">
-          <h1 id="quizTitle">Quick Quiz</h1>
-          <p id="quizSubtitle">One question at a time • Instant feedback • Review at end</p>
+    <div class="shell">
+      <div class="topbar">
+        <div class="topbar-inner">
+          <div class="brand">
+            <h1 id="lessonTitle">Direct vs Indirect Costs</h1>
+            <p id="lessonSubtitle">Learn → Test (card-by-card) • consistent formatting</p>
+          </div>
+          <div class="pill" id="pill">Test: 0 / 0</div>
         </div>
-        <div class="pill" id="pill">0 / 0</div>
-      </div>
-
-      <div class="content" id="quiz">
         <div class="progress"><div class="bar" id="bar"></div></div>
-
-        <div class="q-meta">
-          <div class="small" id="metaLeft">Question</div>
-          <div class="small" id="metaRight"></div>
-        </div>
-
-        <p class="question" id="questionText">...</p>
-
-        <div class="answers" id="answers"></div>
-
-        <div class="explain" id="explain"></div>
-
-        <div class="actions">
-          <div>
-            <button class="ghost" id="restartBtn" type="button">Restart</button>
-          </div>
-          <div style="display:flex; gap:10px;">
-            <button id="checkBtn" class="primary" type="button" disabled>Check</button>
-            <button id="nextBtn" class="primary" type="button" style="display:none;">Next</button>
-          </div>
-        </div>
       </div>
 
-      <div class="result" id="result">
-        <p class="score" id="scoreLine"></p>
-        <p class="sub" id="scoreSub"></p>
-        <button class="primary" id="againBtn" type="button">Try again</button>
+      <div class="content">
+        <!-- LEARN -->
+        <section class="section" id="learn">
+          <div class="section-title">
+            <h2>Learn</h2>
+            <div class="actions">
+              <button class="primary" id="toTestBtn" type="button">Start test</button>
+            </div>
+          </div>
 
-        <div class="review" id="review"></div>
+          <div class="article" id="learnArticle">
+            <!-- Replace this content with your lesson (copy/paste your own writing) -->
+            <h3>What are direct costs?</h3>
+            <p><b>Direct costs</b> can be traced to a specific cost unit (e.g., one product, one job, one service) with confidence.</p>
+            <div class="callout">
+              <div class="emoji">✅</div>
+              <div><b>Rule of thumb:</b> if you can measure it per unit/job without arbitrary guessing, it’s probably direct.</div>
+            </div>
+
+            <h3>What are indirect costs?</h3>
+            <p><b>Indirect costs</b> support production overall and must be shared (apportioned/absorbed) across cost units.</p>
+            <div class="callout">
+              <div class="emoji">🧠</div>
+              <div><b>Think:</b> “necessary, but not traceable to one unit.”</div>
+            </div>
+
+            <h3>Examples table</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Cost item</th>
+                  <th>Direct / Indirect</th>
+                  <th>Why</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Raw materials for Product A</td>
+                  <td>Direct</td>
+                  <td>Traceable to each unit produced.</td>
+                </tr>
+                <tr>
+                  <td>Factory rent</td>
+                  <td>Indirect</td>
+                  <td>Supports the whole factory; shared across products.</td>
+                </tr>
+                <tr>
+                  <td>Wages of machine operator working only on Job 17</td>
+                  <td>Direct</td>
+                  <td>Traceable to a specific job.</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3>Exam-style tip</h3>
+            <p>If the question is ambiguous, justify your choice using the cost unit. “Direct <i>to what</i>?” is the key phrase.</p>
+          </div>
+
+          <p class="footer-note">
+            Tip: Keep Learn concise; your advantage is the Test + Apply. You can add an “Apply” section later with scenarios and input boxes.
+          </p>
+        </section>
+
+        <!-- TEST -->
+        <section class="section" id="test" style="margin-top:18px;">
+          <div class="section-title">
+            <h2>Test</h2>
+            <div class="actions">
+              <button id="restartBtn" type="button">Restart test</button>
+            </div>
+          </div>
+
+          <div class="cards" id="cards"></div>
+
+          <p class="footer-note" id="endNote" style="display:none;">
+            Finished. You can restart, or scroll back to Learn. (You can also add a results summary card if you want.)
+          </p>
+        </section>
       </div>
     </div>
   </div>
 
-<script>
-  // --- EDIT YOUR QUESTIONS HERE ---
-  // correct is index of the correct option (0..n-1)
-  const QUIZ = {
-    title: "AAT Level 2 – Mini Quiz",
-    subtitle: "Clean, Gemini-ish cards • Built for Notion embeds",
-    questions: [
+  <script>
+    // =========================
+    // EDIT THESE TWO BLOCKS
+    // =========================
+
+    const LESSON = {
+      title: "Direct vs Indirect Costs",
+      subtitle: "AAT Level 2 • Clean Learn → Test lesson",
+    };
+
+    // Question cards down the page (MCQ). correct is index in options array.
+    const QUESTIONS = [
       {
-        tag: "Bookkeeping",
-        q: "Which document is usually used to record credit sales before posting to the ledger?",
-        options: ["Purchase invoice", "Sales invoice", "Credit note", "Statement"],
+        tag: "Definitions",
+        q: "Which statement best describes an indirect cost?",
+        options: [
+          "A cost that can be traced to a specific product unit easily",
+          "A cost that supports overall production and must be shared across cost units",
+          "A cost that is always variable",
+          "A cost that is only found in service businesses"
+        ],
         correct: 1,
-        explain: "Credit sales are evidenced by a sales invoice, then posted to the sales day book / receivables."
+        explain: "Indirect costs support production overall (e.g., rent, supervision) and are allocated across cost units."
       },
       {
-        tag: "Costing",
-        q: "If variable cost per unit rises (and price is unchanged), what happens to contribution per unit?",
-        options: ["It increases", "It decreases", "It stays the same", "It becomes zero automatically"],
-        correct: 1,
-        explain: "Contribution = Selling price − Variable cost. Higher variable cost reduces contribution."
+        tag: "Examples",
+        q: "Factory rent is usually classified as:",
+        options: ["Direct material", "Direct labour", "Indirect cost (overhead)", "Selling expense"],
+        correct: 2,
+        explain: "Rent supports the whole factory, so it’s an overhead that must be apportioned/absorbed."
       },
       {
-        tag: "Ethics",
-        q: "The fundamental principle that requires accountants to avoid bias is:",
-        options: ["Integrity", "Objectivity", "Confidentiality", "Professional competence"],
+        tag: "Judgement",
+        q: "The phrase that helps you decide whether a cost is direct is:",
+        options: ["Direct means cheap", "Direct to what cost unit?", "Direct means fixed", "Direct means paid weekly"],
         correct: 1,
-        explain: "Objectivity = not allowing bias, conflicts of interest, or undue influence to override judgement."
+        explain: "Always anchor your answer to the cost unit (a job/product/service)."
       }
-    ]
-  };
+    ];
 
-  // --- QUIZ ENGINE ---
-  const els = {
-    quizTitle: document.getElementById("quizTitle"),
-    quizSubtitle: document.getElementById("quizSubtitle"),
-    pill: document.getElementById("pill"),
-    bar: document.getElementById("bar"),
-    metaLeft: document.getElementById("metaLeft"),
-    metaRight: document.getElementById("metaRight"),
-    questionText: document.getElementById("questionText"),
-    answers: document.getElementById("answers"),
-    explain: document.getElementById("explain"),
-    checkBtn: document.getElementById("checkBtn"),
-    nextBtn: document.getElementById("nextBtn"),
-    restartBtn: document.getElementById("restartBtn"),
-    result: document.getElementById("result"),
-    quiz: document.getElementById("quiz"),
-    scoreLine: document.getElementById("scoreLine"),
-    scoreSub: document.getElementById("scoreSub"),
-    review: document.getElementById("review"),
-    againBtn: document.getElementById("againBtn"),
-  };
+    // =========================
+    // RENDER + QUIZ LOGIC
+    // =========================
 
-  els.quizTitle.textContent = QUIZ.title;
-  els.quizSubtitle.textContent = QUIZ.subtitle;
+    const el = {
+      lessonTitle: document.getElementById("lessonTitle"),
+      lessonSubtitle: document.getElementById("lessonSubtitle"),
+      pill: document.getElementById("pill"),
+      bar: document.getElementById("bar"),
+      cards: document.getElementById("cards"),
+      toTestBtn: document.getElementById("toTestBtn"),
+      restartBtn: document.getElementById("restartBtn"),
+      endNote: document.getElementById("endNote"),
+    };
 
-  let i = 0;
-  let selected = null;
-  let locked = false;
-  const userAnswers = Array(QUIZ.questions.length).fill(null);
+    el.lessonTitle.textContent = LESSON.title;
+    el.lessonSubtitle.textContent = LESSON.subtitle;
 
-  function render(){
-    const total = QUIZ.questions.length;
-    const q = QUIZ.questions[i];
+    let answeredCount = 0;
+    const user = Array(QUESTIONS.length).fill(null);
+    const locked = Array(QUESTIONS.length).fill(true);
+    locked[0] = false; // first card unlocked
 
-    els.pill.textContent = `${i+1} / ${total}`;
-    els.bar.style.width = `${(i / total) * 100}%`;
+    function updateTop(){
+      el.pill.textContent = `Test: ${answeredCount} / ${QUESTIONS.length}`;
+      el.bar.style.width = `${(answeredCount / QUESTIONS.length) * 100}%`;
+    }
 
-    els.metaLeft.textContent = `Question ${i+1} of ${total}`;
-    els.metaRight.textContent = q.tag ? q.tag : "";
+    function scrollToCard(i){
+      const card = document.getElementById(`card-${i}`);
+      if (!card) return;
+      card.scrollIntoView({behavior:"smooth", block:"start"});
+    }
 
-    els.questionText.textContent = q.q;
+    function render(){
+      el.cards.innerHTML = "";
+      el.endNote.style.display = "none";
+      answeredCount = user.filter(v => v !== null).length;
+      updateTop();
 
-    els.answers.innerHTML = "";
-    els.explain.classList.remove("show");
-    els.explain.textContent = "";
+      QUESTIONS.forEach((q, i) => {
+        const card = document.createElement("div");
+        card.className = "card" + (locked[i] ? " locked" : "");
+        card.id = `card-${i}`;
 
-    selected = userAnswers[i];
-    locked = false;
+        const selected = user[i];
 
-    q.options.forEach((opt, idx) => {
-      const div = document.createElement("div");
-      div.className = "ans" + (selected === idx ? " selected" : "");
-      div.tabIndex = 0;
+        card.innerHTML = `
+          <div class="card-head">
+            <div class="meta">Question ${i+1} • ${q.tag ?? ""}</div>
+            <div class="meta">${selected === null ? (locked[i] ? "Locked" : "Answer to continue") : "Answered"}</div>
+          </div>
+          <p class="q">${q.q}</p>
+          <div class="answers" id="answers-${i}"></div>
+          <div class="explain" id="explain-${i}"></div>
+        `;
 
-      div.innerHTML = `
-        <div class="radio"><div class="dot"></div></div>
-        <div class="label">${opt}</div>
-      `;
+        el.cards.appendChild(card);
 
-      const pick = () => {
-        if (locked) return;
-        selected = idx;
-        userAnswers[i] = idx;
-        [...els.answers.children].forEach(c => c.classList.remove("selected"));
-        div.classList.add("selected");
-        els.checkBtn.disabled = false;
-      };
+        const answersEl = document.getElementById(`answers-${i}`);
+        const explainEl = document.getElementById(`explain-${i}`);
 
-      div.addEventListener("click", pick);
-      div.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); }
+        // Build answers
+        q.options.forEach((opt, idx) => {
+          const a = document.createElement("div");
+          a.className = "ans" + (selected === idx ? " selected" : "");
+          a.innerHTML = `
+            <div class="radio"><div class="dot"></div></div>
+            <div class="label">${opt}</div>
+          `;
+
+          a.addEventListener("click", () => {
+            if (locked[i]) return;
+            if (user[i] !== null) return; // already answered (one attempt in this template)
+
+            // record
+            user[i] = idx;
+            answeredCount = user.filter(v => v !== null).length;
+
+            // mark correct/wrong styles
+            [...answersEl.children].forEach((node, j) => {
+              node.classList.remove("selected");
+              if (j === q.correct) node.classList.add("correct");
+              if (j === idx && idx !== q.correct) node.classList.add("wrong");
+            });
+
+            // explanation
+            if (q.explain){
+              explainEl.textContent = q.explain;
+              explainEl.classList.add("show");
+            }
+
+            // unlock next
+            if (i + 1 < QUESTIONS.length){
+              locked[i + 1] = false;
+              render(); // re-render to unlock & update states
+              // scroll to the next newly unlocked card
+              setTimeout(() => scrollToCard(i + 1), 120);
+            } else {
+              updateTop();
+              el.bar.style.width = `100%`;
+              el.endNote.style.display = "block";
+            }
+          });
+
+          answersEl.appendChild(a);
+        });
+
+        // If already answered, show state (correct/wrong + explanation)
+        if (selected !== null){
+          [...answersEl.children].forEach((node, j) => {
+            node.classList.remove("selected");
+            if (j === q.correct) node.classList.add("correct");
+            if (j === selected && selected !== q.correct) node.classList.add("wrong");
+          });
+          if (q.explain){
+            explainEl.textContent = q.explain;
+            explainEl.classList.add("show");
+          }
+        }
       });
 
-      els.answers.appendChild(div);
-    });
+      updateTop();
+    }
 
-    els.checkBtn.style.display = "inline-block";
-    els.nextBtn.style.display = "none";
-    els.checkBtn.disabled = (selected === null);
-
-    if (selected !== null) els.checkBtn.disabled = false;
-  }
-
-  function check(){
-    if (selected === null) return;
-
-    const q = QUIZ.questions[i];
-    locked = true;
-
-    [...els.answers.children].forEach((node, idx) => {
-      node.classList.remove("selected");
-      if (idx === q.correct) node.classList.add("correct");
-      if (idx === selected && selected !== q.correct) node.classList.add("wrong");
-    });
-
-    els.explain.textContent = q.explain || "";
-    if (q.explain) els.explain.classList.add("show");
-
-    els.checkBtn.style.display = "none";
-    els.nextBtn.style.display = "inline-block";
-    els.bar.style.width = `${((i+1) / QUIZ.questions.length) * 100}%`;
-  }
-
-  function next(){
-    if (i < QUIZ.questions.length - 1){
-      i++;
+    function restart(){
+      for (let i=0;i<user.length;i++) user[i] = null;
+      for (let i=0;i<locked.length;i++) locked[i] = true;
+      locked[0] = false;
       render();
-    } else {
-      showResults();
-    }
-  }
-
-  function showResults(){
-    const total = QUIZ.questions.length;
-    let score = 0;
-
-    for (let k=0; k<total; k++){
-      if (userAnswers[k] === QUIZ.questions[k].correct) score++;
+      scrollToCard(0);
     }
 
-    els.quiz.style.display = "none";
-    els.result.classList.add("show");
-
-    els.scoreLine.textContent = `${score} / ${total}`;
-    els.scoreSub.textContent = score === total
-      ? "Perfect. Nice."
-      : "Review below, then run it back.";
-
-    els.review.innerHTML = "";
-    QUIZ.questions.forEach((q, k) => {
-      const ok = userAnswers[k] === q.correct;
-      const row = document.createElement("div");
-      row.className = "row";
-      row.innerHTML = `
-        <p class="q">${q.q}
-          <span class="tag ${ok ? "good" : "bad"}">${ok ? "Correct" : "Incorrect"}</span>
-        </p>
-        <p class="a"><b>Your answer:</b> ${userAnswers[k] === null ? "—" : q.options[userAnswers[k]]}</p>
-        <p class="a"><b>Correct:</b> ${q.options[q.correct]}</p>
-        ${q.explain ? `<p class="a"><b>Why:</b> ${q.explain}</p>` : ""}
-      `;
-      els.review.appendChild(row);
+    el.toTestBtn.addEventListener("click", () => {
+      document.getElementById("test").scrollIntoView({behavior:"smooth", block:"start"});
+      // Optionally scroll to first card
+      setTimeout(() => scrollToCard(0), 150);
     });
-  }
 
-  function restart(){
-    i = 0;
-    for (let k=0; k<userAnswers.length; k++) userAnswers[k] = null;
-    els.result.classList.remove("show");
-    els.quiz.style.display = "block";
+    el.restartBtn.addEventListener("click", restart);
+
     render();
-  }
-
-  els.checkBtn.addEventListener("click", check);
-  els.nextBtn.addEventListener("click", next);
-  els.restartBtn.addEventListener("click", restart);
-  els.againBtn.addEventListener("click", restart);
-
-  render();
-</script>
+  </script>
 </body>
 </html>
+
