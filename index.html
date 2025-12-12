@@ -5,36 +5,27 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Direct vs Indirect Costs — Learn → Test</title>
 
-  <!-- Optional: nicer font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-
   <style>
     :root{
-      /* Cognito-ish clean app vibe */
-      --bg: #f6f7fb;
+      /* Cognito-like palette from screenshot */
+      --bg: #f4f6f8;
       --panel: #ffffff;
-      --panel-2:#fbfcff;
-      --text: #101828;
-      --muted:#667085;
-      --border: rgba(16,24,40,0.10);
+      --border: #e6e9ef;
+      --text: #111827;
+      --muted:#6b7280;
 
-      --accent:#4f46e5;       /* indigo */
-      --accent-2:#22c3ee;     /* cyan */
-      --good:#12b76a;         /* green */
-      --bad:#f04438;          /* red */
+      --green: #7bd6a3;     /* border + correct */
+      --green-2:#25c06d;    /* progress fill */
+      --navy:#2f3b4d;       /* Continue button */
+      --option-border:#d8dde6;
 
-      --radius: 16px;
-      --radius-sm: 12px;
+      --radius: 10px;
+      --shadow: 0 2px 10px rgba(16,24,40,0.05);
 
-      --shadow: 0 10px 30px rgba(16,24,40,0.08);
-      --shadow-2: 0 14px 44px rgba(16,24,40,0.10);
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
 
-      --font: Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-
-      /* Sticky header scroll offset (prevents cut-off on auto-scroll) */
-      --header-offset: 84px; /* adjust if needed */
+      /* Sticky header scroll offset */
+      --header-offset: 64px;
     }
 
     *{box-sizing:border-box}
@@ -42,14 +33,11 @@
     body{
       margin:0;
       font-family:var(--font);
+      background:var(--bg);
       color:var(--text);
-      background:
-        radial-gradient(900px 500px at 15% 0%, rgba(79,70,229,0.10), transparent 55%),
-        radial-gradient(900px 500px at 85% 10%, rgba(34,195,238,0.10), transparent 55%),
-        var(--bg);
     }
 
-    /* Apply scroll offset to anchors/sections/cards */
+    /* Make anchor/auto-scroll land below sticky header */
     [id^="q-"],
     #test,
     .section,
@@ -57,292 +45,285 @@
       scroll-margin-top: var(--header-offset);
     }
 
-    /* Top app bar */
+    /* Top bar */
     .top{
-      position:sticky; top:0; z-index:50;
-      background: rgba(255,255,255,0.82);
-      backdrop-filter: blur(12px);
+      position:sticky;
+      top:0;
+      z-index:50;
+      background: rgba(244,246,248,0.92);
+      backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
     }
     .topinner{
-      width:min(1040px, 100%);
+      height: var(--header-offset);
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      width:min(980px, 100%);
       margin:0 auto;
-      padding:14px 18px;
-      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:0 18px;
     }
-    .brand{
-      display:flex; flex-direction:column; gap:4px; min-width:0;
-    }
-    .brand b{
-      font-size:14px;
-      letter-spacing:0.2px;
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .brand span{
-      font-size:12px;
+    .left{
+      display:flex;
+      align-items:center;
+      gap:10px;
       color:var(--muted);
-      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    }
-    .pill{
-      display:inline-flex; align-items:center; gap:8px;
-      font-size:12px;
-      color:rgba(79,70,229,0.95);
-      background: rgba(79,70,229,0.08);
-      border:1px solid rgba(79,70,229,0.20);
-      padding:8px 12px;
-      border-radius:999px;
-      white-space:nowrap;
+      font-size:13px;
       font-weight:600;
     }
+    .back{
+      width:28px;height:28px;
+      display:grid;place-items:center;
+      border-radius:8px;
+      border:1px solid var(--border);
+      background:#fff;
+      cursor:pointer;
+      user-select:none;
+    }
 
+    .right{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+    }
+    .xp{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 10px;
+      border:1px solid var(--border);
+      border-radius:10px;
+      background:#fff;
+    }
+
+    /* Progress bar (thin track, green fill) */
+    .progress-wrap{
+      width:min(980px, 100%);
+      margin:0 auto;
+      padding:0 18px 10px;
+    }
     .progress{
-      height:8px;
-      background: rgba(16,24,40,0.05);
-      border-top: 1px solid var(--border);
+      height:6px;
+      border-radius:999px;
+      background:#e9edf3;
+      overflow:hidden;
     }
     .bar{
       height:100%;
       width:0%;
-      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+      background: var(--green-2);
       transition: width 220ms ease;
+      border-radius:999px;
     }
 
-    /* Layout */
+    /* Page layout */
     .wrap{
-      width:min(1040px, 100%);
+      width:min(980px, 100%);
       margin:0 auto;
-      padding:22px 18px 72px;
-    }
-    .hero{
-      margin-top:6px;
-      padding:22px 20px;
-      border:1px solid var(--border);
-      background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.80));
-      border-radius: 20px;
-      box-shadow: var(--shadow);
-    }
-    .page-title{
-      font-size:34px;
-      font-weight:850;
-      letter-spacing:-0.6px;
-      margin:0 0 6px;
-    }
-    .page-sub{
-      margin:0;
-      color:var(--muted);
-      font-size:14.5px;
-      line-height:1.5;
+      padding:18px 18px 80px;
     }
 
-    .toc{
-      margin-top:14px;
-      display:grid;
-      grid-template-columns: 1fr;
-      gap:8px;
-    }
-    .toc a{
-      text-decoration:none;
-      color:var(--text);
-      background: var(--panel);
+    /* Module card (top Learn overview) */
+    .module{
+      background:var(--panel);
       border:1px solid var(--border);
-      border-radius: 12px;
-      padding:10px 12px;
-      box-shadow: 0 6px 18px rgba(16,24,40,0.05);
-    }
-    .toc a:hover{
-      border-color: rgba(79,70,229,0.22);
-      box-shadow: 0 10px 24px rgba(16,24,40,0.07);
-    }
-
-    .section{
-      margin-top:22px;
-    }
-    .section h2{
-      font-size:12px;
-      letter-spacing:0.22px;
-      text-transform:uppercase;
-      color:var(--muted);
-      margin:0 0 12px;
-      font-weight:800;
-    }
-
-    /* Cards */
-    .card{
-      border:1px solid var(--border);
-      background: var(--panel);
       border-radius: var(--radius);
-      padding:18px;
       box-shadow: var(--shadow);
+      padding:18px;
     }
-    .card + .card{ margin-top:12px; }
-
-    .card h3{
-      margin:0 0 10px;
+    .module h1{
+      margin:0 0 12px;
       font-size:18px;
-      letter-spacing:-0.2px;
       font-weight:800;
-    }
-    .card p{
-      margin:10px 0;
-      color: rgba(16,24,40,0.88);
-      font-size:15.5px;
-      line-height:1.65;
-    }
-    .card ul{
-      margin:10px 0 0 18px;
-      color: rgba(16,24,40,0.88);
-      font-size:15.5px;
-      line-height:1.65;
+      color:#0f172a;
     }
 
-    /* Callout */
-    .callout{
-      margin-top:12px;
-      border:1px solid var(--border);
-      background: var(--panel-2);
-      border-radius: var(--radius-sm);
-      padding:12px 12px;
-      display:flex;
+    .topiclist{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
       gap:10px;
-      align-items:flex-start;
+      color:#111827;
+      font-size:14px;
+      font-weight:600;
     }
-    .emoji{
-      width:24px;
-      flex:0 0 auto;
-      text-align:center;
-      font-size:16px;
-      line-height:1.2;
-      margin-top:1px;
-    }
-
-    /* Buttons */
-    .cta-row{
+    .topic{
       display:flex;
-      justify-content:flex-end;
+      align-items:center;
       gap:10px;
-      margin-top:14px;
     }
-    button{
-      appearance:none;
-      border:1px solid var(--border);
-      background: #fff;
-      color: var(--text);
-      padding:10px 12px;
-      border-radius: 12px;
-      font-weight:700;
-      cursor:pointer;
-      transition: transform 80ms ease, box-shadow 120ms ease, border-color 120ms ease;
-    }
-    button:hover{
-      border-color: rgba(79,70,229,0.20);
-      box-shadow: 0 10px 22px rgba(16,24,40,0.08);
-    }
-    button:active{ transform: scale(0.99); }
-
-    button.primary{
+    .num{
+      width:22px;height:22px;
+      border-radius:999px;
+      display:grid; place-items:center;
+      background:#111827;
       color:#fff;
-      border-color: rgba(79,70,229,0.35);
-      background: linear-gradient(90deg, rgba(79,70,229,1), rgba(34,195,238,1));
-      box-shadow: 0 12px 26px rgba(79,70,229,0.20);
+      font-size:12px;
+      font-weight:800;
+      flex:0 0 auto;
     }
-
-    /* Quiz header card */
-    .quiz-meta{
+    .divider{
+      height:1px;
+      background: #eef1f6;
+      margin:16px 0;
+    }
+    .meta-row{
       display:flex;
       align-items:center;
       justify-content:space-between;
-      gap:10px;
+      gap:12px;
       color:var(--muted);
-      font-size:12.5px;
+      font-size:13px;
       font-weight:600;
     }
-
-    /* Quiz cards */
-    .q{ margin:10px 0 0; font-size:16px; font-weight:850; letter-spacing:-0.2px; line-height:1.35; }
-    .answers{ display:grid; gap:10px; margin-top:12px; }
-
-    .ans{
+    .pills{
       display:flex;
-      gap:12px;
-      align-items:flex-start;
-      border:1px solid var(--border);
-      border-radius: 14px;
-      padding:12px 12px;
-      background: #fff;
-      cursor:pointer;
-      transition: transform 80ms ease, box-shadow 120ms ease, border-color 120ms ease, background 120ms ease;
+      gap:10px;
+      flex-wrap:wrap;
     }
-    .ans:hover{
-      border-color: rgba(79,70,229,0.22);
-      box-shadow: 0 12px 22px rgba(16,24,40,0.07);
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:7px 10px;
+      border:1px solid var(--border);
+      border-radius:999px;
+      background:#fff;
+      color:#111827;
+      font-weight:700;
+      font-size:13px;
+    }
+
+    .section{ margin-top:18px; }
+
+    /* Quiz card like screenshot */
+    .quiz-card{
+      background:var(--panel);
+      border:2px solid rgba(123,214,163,0.55);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding:18px;
+      margin-top:16px;
+    }
+    .quiz-topline{
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      font-weight:700;
+      margin-bottom:14px;
+    }
+    .question{
+      text-align:center;
+      font-size:16px;
+      font-weight:800;
+      margin:0 0 14px;
+      color:#0f172a;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      width:min(560px, 100%);
+      margin:0 auto;
+    }
+    .opt{
+      border:1px solid var(--option-border);
+      background:#fff;
+      border-radius:6px;
+      padding:10px 12px;
+      font-size:13.5px;
+      font-weight:700;
+      color:#344054;
+      cursor:pointer;
+      text-align:center;
+      transition: transform 70ms ease, background 120ms ease, border-color 120ms ease;
+      user-select:none;
+    }
+    .opt:hover{
+      border-color:#bfc7d6;
       transform: translateY(-1px);
     }
-
-    .radio{
-      width:18px; height:18px;
-      border-radius:999px;
-      border:1.8px solid rgba(16,24,40,0.30);
-      margin-top:2px;
-      position:relative;
-      flex:0 0 auto;
+    .opt.correct{
+      background: var(--green);
+      border-color: var(--green);
+      color:#fff;
     }
-    .dot{
-      position:absolute;
-      inset:3px;
-      border-radius:999px;
-      background: transparent;
-    }
-    .label{
-      font-size:15px;
-      line-height:1.45;
-      color: rgba(16,24,40,0.90);
-      font-weight:600;
+    .opt.wrong{
+      background:#fff;
+      border-color: rgba(240,68,56,0.35);
+      color:#344054;
     }
 
-    .ans.selected{
-      border-color: rgba(79,70,229,0.38);
-      background: rgba(79,70,229,0.05);
+    .quiz-footer{
+      margin-top:14px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
     }
-    .ans.selected .radio{
-      border-color: rgba(79,70,229,0.60);
-    }
-    .ans.selected .dot{
-      background: rgba(79,70,229,0.95);
-    }
-    .ans.correct{
-      border-color: rgba(18,183,106,0.40);
-      background: rgba(18,183,106,0.07);
-    }
-    .ans.wrong{
-      border-color: rgba(240,68,56,0.40);
-      background: rgba(240,68,56,0.06);
-    }
-
-    .explain{
-      display:none;
-      margin-top:12px;
-      padding:12px 12px;
-      border-radius: 14px;
-      border:1px solid var(--border);
-      background: var(--panel-2);
+    .icons{
+      display:flex;
+      gap:10px;
+      color:#98a2b3;
       font-size:14px;
-      line-height:1.55;
-      color: rgba(16,24,40,0.84);
+      user-select:none;
     }
-    .explain.show{ display:block; }
+    .scorebox{
+      border:1px solid rgba(123,214,163,0.70);
+      background: rgba(123,214,163,0.14);
+      color:#0f7a4d;
+      font-weight:900;
+      font-size:13px;
+      padding:6px 10px;
+      border-radius:6px;
+      min-width:52px;
+      text-align:center;
+    }
+
+    .continue-wrap{
+      margin-top:16px;
+      display:flex;
+      justify-content:center;
+    }
+    .continue{
+      width: 220px;
+      height: 40px;
+      border:none;
+      background: var(--navy);
+      color:#fff;
+      border-radius:8px;
+      font-weight:800;
+      cursor:pointer;
+    }
+    .continue:disabled{
+      opacity:0.55;
+      cursor:not-allowed;
+    }
 
     .locked{
       opacity:0.55;
-      filter: saturate(0.85);
+      pointer-events:none;
     }
 
-    .endnote{
-      display:none;
+    /* Small helper link */
+    .jump{
+      display:flex;
+      justify-content:center;
       margin-top:14px;
-      color: var(--muted);
-      font-size:13.5px;
-      line-height:1.5;
-      font-weight:600;
+    }
+    .jump button{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:10px;
+      padding:10px 12px;
+      font-weight:800;
+      cursor:pointer;
+      color:#111827;
     }
   </style>
 </head>
@@ -350,147 +331,56 @@
 <body>
   <div class="top">
     <div class="topinner">
-      <div class="brand">
-        <b>Direct vs Indirect Costs</b>
-        <span>Learn → Test (Cognito-style layout)</span>
+      <div class="left">
+        <div class="back" title="Back">←</div>
+        <div>Economics quizzes</div>
       </div>
-      <div class="pill" id="pill">Quiz: 0 / 0</div>
+      <div class="right">
+        <div class="xp">★ <span id="xpText">+0 XP</span></div>
+      </div>
     </div>
-    <div class="progress"><div class="bar" id="bar"></div></div>
+
+    <div class="progress-wrap">
+      <div class="progress"><div class="bar" id="bar"></div></div>
+    </div>
   </div>
 
   <div class="wrap">
-    <div class="hero">
-      <h1 class="page-title">Direct Vs Indirect Costs</h1>
-      <p class="page-sub">1.1 — Direct Vs Indirect Costs</p>
+    <!-- LEARN overview card (keeps your content; same structure as screenshot module card) -->
+    <div class="module" id="learn">
+      <h1>1.1 - Direct Vs Indirect Costs</h1>
 
-      <div class="toc" aria-label="On this page">
-        <a href="#s1">❶ What is a cost?</a>
-        <a href="#s2">❷ Direct Costs</a>
-        <a href="#s3">❸ Indirect Costs</a>
-        <a href="#s4">❹ Why does the distinction matter?</a>
-        <a href="#test">Go to Test</a>
+      <ol class="topiclist">
+        <li class="topic"><span class="num">1</span> What is a cost?</li>
+        <li class="topic"><span class="num">2</span> Direct costs</li>
+        <li class="topic"><span class="num">3</span> Indirect costs</li>
+        <li class="topic"><span class="num">4</span> Why does the distinction matter?</li>
+      </ol>
+
+      <div class="divider"></div>
+
+      <div class="meta-row">
+        <div class="pills">
+          <span class="pill">⏱️ 3 mins</span>
+          <span class="pill">❓ <span id="qCountPill">0</span> questions</span>
+        </div>
+        <div style="opacity:.6;">⤴︎</div>
+      </div>
+
+      <div class="jump">
+        <button id="startTestBtn" type="button">Start quiz</button>
       </div>
     </div>
 
-    <!-- LEARN (content kept exactly as your PDF text) -->
-    <section class="section" id="learn">
-      <h2>Learn</h2>
-
-      <div class="card" id="s1">
-        <h3>❶ What is a cost?</h3>
-        <p>A cost is the value of resources used by a business to produce goods or provide services.</p>
-        <p>Businesses need to understand their costs so they can set prices, control spending, and make informed decisions.</p>
-
-        <div class="callout">
-          <div class="emoji">📌</div>
-          <div>
-            <b>Examples of common costs:</b>
-            <ul>
-              <li>Materials</li>
-              <li>Wages</li>
-              <li>Rent</li>
-              <li>Utilities (e.g., electricity)</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-
-      <div class="card" id="s2">
-        <h3>❷ Direct Costs</h3>
-        <p>Direct costs are costs that can be linked clearly and directly to a specific product, service, or job.</p>
-        <p>These costs are incurred because the product or job is being made.</p>
-
-        <div class="callout">
-          <div class="emoji">✅</div>
-          <div>
-            <b>Examples of direct costs:</b>
-            <ul>
-              <li>Raw materials used in production</li>
-              <li>Wages of staff working directly on a job</li>
-              <li>Components used to assemble a product</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="callout">
-          <div class="emoji">📈</div>
-          <div>Direct costs vary depending on the level of production — more production usually means higher direct costs.</div>
-        </div>
-      </div>
-
-      <div class="card" id="s3">
-        <h3>❸ Indirect Costs</h3>
-        <p>Indirect costs are costs that support the business but cannot be traced to one specific product or job.</p>
-        <p>They are shared across multiple activities, departments, or jobs.</p>
-
-        <div class="callout">
-          <div class="emoji">🏭</div>
-          <div>
-            <b>Examples of indirect costs:</b>
-            <ul>
-              <li>Rent for the building</li>
-              <li>Electricity for the premises</li>
-              <li>Salaries of supervisors or administrative staff</li>
-              <li>Depreciation of machinery</li>
-            </ul>
-          </div>
-        </div>
-
-        <div class="callout">
-          <div class="emoji">🧊</div>
-          <div>Indirect costs usually stay the same regardless of how many products are made.</div>
-        </div>
-      </div>
-
-      <div class="card" id="s4">
-        <h3>❹ Why does the distinction matter?</h3>
-        <p>It is important for a business to know whether a cost is direct or indirect because:</p>
-        <ul>
-          <li>Direct costs help calculate the cost of producing each product or job</li>
-          <li>Indirect costs need to be allocated or spread across products</li>
-          <li>Accurate cost classification supports pricing decisions</li>
-          <li>It helps businesses understand profitability and prepare budgets</li>
-        </ul>
-
-        <div class="callout">
-          <div class="emoji">🎯</div>
-          <div>Understanding this difference is essential for basic costing methods used in accounting.</div>
-        </div>
-
-        <div class="cta-row">
-          <button class="primary" id="startTestBtn" type="button">Start test</button>
-        </div>
-      </div>
-    </section>
-
     <!-- TEST -->
-    <section class="section" id="test">
-      <h2>Test</h2>
-
-      <div class="card" style="margin-bottom:12px;">
-        <div class="quiz-meta">
-          <div>Answer each card to unlock the next.</div>
-          <button id="restartBtn" type="button">Restart quiz</button>
-        </div>
-      </div>
-
-      <div id="cards"></div>
-      <div class="endnote" id="endnote">Finished — nice. Scroll up to review Learn or restart the quiz.</div>
-    </section>
+    <section class="section" id="test"></section>
+    <div id="cards"></div>
   </div>
 
   <script>
+    // ==== Put your quiz questions here ====
     const QUESTIONS = [
       {
-        tag: "Basics",
-        q: "A cost is the value of resources used by a business to produce goods or provide services.",
-        options: ["True", "False"],
-        correct: 0,
-        explain: "This is the definition of a cost."
-      },
-      {
-        tag: "Direct Costs",
         q: "Which of the following is a direct cost?",
         options: [
           "Rent for the building",
@@ -498,18 +388,14 @@
           "Electricity for the premises",
           "Salaries of supervisors"
         ],
-        correct: 1,
-        explain: "Raw materials used in production can be linked directly to a product/job."
+        correct: 1
       },
       {
-        tag: "Indirect Costs",
         q: "Indirect costs are costs that can be linked clearly and directly to a specific product, service, or job.",
         options: ["True", "False"],
-        correct: 1,
-        explain: "That statement describes direct costs. Indirect costs cannot be traced to one specific product/job."
+        correct: 1
       },
       {
-        tag: "Why it matters",
         q: "Why does it matter whether a cost is direct or indirect?",
         options: [
           "Indirect costs need to be allocated or spread across products",
@@ -517,28 +403,32 @@
           "Indirect costs are always zero",
           "It only matters for marketing"
         ],
-        correct: 0,
-        explain: "Indirect costs need allocating/absorbing across products; classification supports pricing and budgeting."
+        correct: 0
       }
     ];
 
-    const el = {
-      pill: document.getElementById("pill"),
-      bar: document.getElementById("bar"),
-      cards: document.getElementById("cards"),
-      endnote: document.getElementById("endnote"),
-      startTestBtn: document.getElementById("startTestBtn"),
-      restartBtn: document.getElementById("restartBtn")
-    };
-
+    // ==== State ====
     const user = Array(QUESTIONS.length).fill(null);
     const unlocked = Array(QUESTIONS.length).fill(false);
     unlocked[0] = true;
 
-    function updateProgress(){
+    const el = {
+      bar: document.getElementById("bar"),
+      cards: document.getElementById("cards"),
+      start: document.getElementById("startTestBtn"),
+      qCountPill: document.getElementById("qCountPill"),
+      xpText: document.getElementById("xpText"),
+    };
+
+    el.qCountPill.textContent = QUESTIONS.length;
+
+    function updateTop(){
       const done = user.filter(v => v !== null).length;
-      el.pill.textContent = `Quiz: ${done} / ${QUESTIONS.length}`;
-      el.bar.style.width = `${(done / QUESTIONS.length) * 100}%`;
+      const pct = (done / QUESTIONS.length) * 100;
+      el.bar.style.width = pct + "%";
+
+      // simple XP like screenshot (optional vibe)
+      el.xpText.textContent = `+${done * 5} XP`;
     }
 
     function scrollToCard(i){
@@ -548,95 +438,97 @@
 
     function render(){
       el.cards.innerHTML = "";
-      el.endnote.style.display = "none";
 
-      QUESTIONS.forEach((q, i) => {
+      QUESTIONS.forEach((item, i) => {
         const card = document.createElement("div");
-        card.className = "card" + (unlocked[i] ? "" : " locked");
+        card.className = "quiz-card" + (unlocked[i] ? "" : " locked");
         card.id = `q-${i}`;
 
+        const doneCount = user.filter(v => v !== null).length;
+
         card.innerHTML = `
-          <div class="quiz-meta">
-            <div>${q.tag ? q.tag + " • " : ""}Question ${i+1} of ${QUESTIONS.length}</div>
-            <div>${unlocked[i] ? (user[i]===null ? "Answer to continue" : "Answered") : "Locked"}</div>
+          <div class="quiz-topline">${i+1} of ${QUESTIONS.length}</div>
+          <div class="question">${item.q}</div>
+          <div class="options" id="opts-${i}"></div>
+
+          <div class="quiz-footer">
+            <div class="icons">👍 👎 ⚠️</div>
+            <div class="scorebox" id="score-${i}">0/1</div>
           </div>
-          <p class="q">${q.q}</p>
-          <div class="answers" id="a-${i}"></div>
-          <div class="explain" id="e-${i}"></div>
+
+          <div class="continue-wrap">
+            <button class="continue" id="cont-${i}" ${user[i]===null ? "disabled" : ""}>Continue</button>
+          </div>
         `;
 
         el.cards.appendChild(card);
 
-        const answersEl = document.getElementById(`a-${i}`);
-        const explainEl = document.getElementById(`e-${i}`);
+        const opts = document.getElementById(`opts-${i}`);
+        const score = document.getElementById(`score-${i}`);
+        const cont = document.getElementById(`cont-${i}`);
 
-        q.options.forEach((opt, idx) => {
-          const a = document.createElement("div");
-          a.className = "ans";
-          a.innerHTML = `<div class="radio"><div class="dot"></div></div><div class="label">${opt}</div>`;
+        // Build options
+        item.options.forEach((text, idx) => {
+          const o = document.createElement("div");
+          o.className = "opt";
+          o.textContent = text;
 
-          a.addEventListener("click", () => {
+          o.addEventListener("click", () => {
             if (!unlocked[i]) return;
-            if (user[i] !== null) return; // one attempt per card
+            if (user[i] !== null) return; // one attempt (matches “locked in” feel)
 
             user[i] = idx;
 
-            [...answersEl.children].forEach((node, j) => {
-              if (j === q.correct) node.classList.add("correct");
-              if (j === idx && idx !== q.correct) node.classList.add("wrong");
-              if (j === idx) node.classList.add("selected");
+            // Mark correct + wrong (but only visually show green correct like screenshot)
+            [...opts.children].forEach((node, j) => {
+              if (j === item.correct) node.classList.add("correct");
             });
 
-            if (q.explain){
-              explainEl.textContent = q.explain;
-              explainEl.classList.add("show");
-            }
+            // Score box bottom-right like screenshot
+            const got = idx === item.correct ? 1 : 0;
+            score.textContent = `${got}/1`;
 
-            if (i + 1 < QUESTIONS.length){
-              unlocked[i+1] = true;
-              updateProgress();
-              render();
-              setTimeout(() => scrollToCard(i+1), 140);
-            } else {
-              updateProgress();
-              el.bar.style.width = "100%";
-              el.endnote.style.display = "block";
-            }
+            // Enable continue
+            cont.disabled = false;
+
+            updateTop();
           });
 
-          answersEl.appendChild(a);
+          opts.appendChild(o);
         });
 
+        // If already answered, re-apply correct highlight + score
         if (user[i] !== null){
-          [...answersEl.children].forEach((node, j) => {
-            if (j === q.correct) node.classList.add("correct");
-            if (j === user[i] && user[i] !== q.correct) node.classList.add("wrong");
-            if (j === user[i]) node.classList.add("selected");
+          [...opts.children].forEach((node, j) => {
+            if (j === item.correct) node.classList.add("correct");
           });
-          if (q.explain){
-            explainEl.textContent = q.explain;
-            explainEl.classList.add("show");
-          }
+          score.textContent = `${user[i] === item.correct ? 1 : 0}/1`;
+          cont.disabled = false;
         }
+
+        // Continue behaviour: unlock next + scroll
+        cont.addEventListener("click", () => {
+          if (user[i] === null) return;
+
+          if (i + 1 < QUESTIONS.length){
+            unlocked[i+1] = true;
+            render();
+            setTimeout(() => scrollToCard(i+1), 120);
+          } else {
+            // finish
+            updateTop();
+            el.bar.style.width = "100%";
+          }
+        });
       });
 
-      updateProgress();
+      updateTop();
     }
 
-    function restart(){
-      for (let i=0;i<user.length;i++) user[i]=null;
-      for (let i=0;i<unlocked.length;i++) unlocked[i]=false;
-      unlocked[0]=true;
-      render();
-      scrollToCard(0);
-    }
-
-    el.startTestBtn.addEventListener("click", () => {
+    el.start.addEventListener("click", () => {
       document.getElementById("test").scrollIntoView({behavior:"smooth", block:"start"});
-      setTimeout(() => scrollToCard(0), 150);
+      setTimeout(() => scrollToCard(0), 120);
     });
-
-    el.restartBtn.addEventListener("click", restart);
 
     render();
   </script>
