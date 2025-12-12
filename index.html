@@ -3,469 +3,489 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Lesson — Learn → Test</title>
+  <title>Direct vs Indirect Costs — Learn → Test</title>
   <style>
     :root{
-      --bg:#0b0f19;
-      --paper:rgba(255,255,255,.06);
-      --paper2:rgba(255,255,255,.085);
-      --border:rgba(255,255,255,.12);
-      --text:rgba(255,255,255,.92);
-      --muted:rgba(255,255,255,.65);
-      --accent:#8b5cf6;
-      --accent2:#22d3ee;
-      --good:#22c55e;
-      --bad:#ef4444;
-      --radius:18px;
-      --shadow:0 18px 48px rgba(0,0,0,.38);
-      --font:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,"Apple Color Emoji","Segoe UI Emoji";
+      /* Notion-ish light theme */
+      --bg:#ffffff;
+      --text:#2f3437;
+      --muted:#6b6f76;
+      --border:rgba(55,53,47,0.16);
+      --surface:#ffffff;
+      --surface2:#fbfbfa;
+      --accent:#2383e2;
+
+      --good:#0f9d58;
+      --bad:#d93025;
+
+      --radius:12px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
     }
 
     *{box-sizing:border-box}
     html{scroll-behavior:smooth}
-    body{
-      margin:0; font-family:var(--font); color:var(--text);
-      background:
-        radial-gradient(1200px 650px at 20% 0%, rgba(139,92,246,.22), transparent 60%),
-        radial-gradient(900px 500px at 90% 10%, rgba(34,211,238,.16), transparent 55%),
-        linear-gradient(180deg, #050814, #070a12 45%, #050814);
-      min-height:100vh;
-    }
+    body{margin:0; font-family:var(--font); color:var(--text); background:var(--bg);}
 
-    .wrap{width:min(980px, 100%); margin:0 auto; padding:22px 16px 64px;}
-    .shell{
-      border:1px solid var(--border);
-      background:linear-gradient(180deg, var(--paper), rgba(255,255,255,.03));
-      border-radius:var(--radius);
-      box-shadow:var(--shadow);
-      overflow:hidden;
-    }
-
-    /* Top bar */
-    .topbar{
-      position:sticky; top:0; z-index:10;
-      border-bottom:1px solid var(--border);
-      background:linear-gradient(90deg, rgba(139,92,246,.14), rgba(34,211,238,.10));
+    .top{
+      position:sticky; top:0; z-index:20;
+      background:rgba(255,255,255,0.92);
       backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
     }
-    .topbar-inner{
-      display:flex; align-items:center; justify-content:space-between;
-      gap:12px; padding:14px 16px;
+    .topinner{
+      width:min(980px,100%);
+      margin:0 auto;
+      padding:10px 16px;
+      display:flex; gap:12px; align-items:center; justify-content:space-between;
     }
-    .brand{display:flex; flex-direction:column; gap:4px}
-    .brand h1{margin:0; font-size:15px; font-weight:750; letter-spacing:.2px}
-    .brand p{margin:0; font-size:12.5px; color:var(--muted)}
+    .title{display:flex; flex-direction:column; gap:2px; min-width:0}
+    .title b{font-size:14px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .title span{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
     .pill{
-      font-size:12px; color:rgba(255,255,255,.82);
+      font-size:12px; color:var(--muted);
       border:1px solid var(--border);
-      background:rgba(255,255,255,.06);
-      padding:6px 10px; border-radius:999px; white-space:nowrap;
+      background:var(--surface);
+      padding:6px 10px; border-radius:999px;
+      white-space:nowrap;
     }
     .progress{
-      height:10px;
+      height:6px;
+      background:var(--surface2);
       border-top:1px solid var(--border);
-      background:rgba(255,255,255,.05);
     }
     .bar{
-      height:100%; width:0%;
-      background:linear-gradient(90deg, var(--accent), var(--accent2));
-      transition:width 320ms ease;
+      height:100%;
+      width:0%;
+      background:var(--accent);
+      transition:width 220ms ease;
     }
 
-    /* Content */
-    .content{padding:18px 18px 24px}
-    .section{padding:6px 0 0}
-    .section-title{
-      display:flex; align-items:center; justify-content:space-between; gap:12px;
-      margin:8px 0 12px;
-    }
-    .section-title h2{margin:0; font-size:14px; letter-spacing:.3px; color:rgba(255,255,255,.82); font-weight:800; text-transform:uppercase}
-    .actions{display:flex; gap:10px; flex-wrap:wrap}
-
-    button{
-      appearance:none; border:1px solid var(--border);
-      background:rgba(255,255,255,.06);
-      color:var(--text); font-weight:750;
-      padding:10px 12px; border-radius:12px; cursor:pointer;
-      transition:background 120ms ease, border-color 120ms ease;
-    }
-    button:hover{background:rgba(255,255,255,.085)}
-    button.primary{
-      border-color:rgba(139,92,246,.55);
-      background:linear-gradient(90deg, rgba(139,92,246,.22), rgba(34,211,238,.14));
+    .wrap{
+      width:min(980px,100%);
+      margin:0 auto;
+      padding:18px 16px 64px;
     }
 
-    /* Notion-ish typography */
-    .article h3{margin:18px 0 8px; font-size:18px; font-weight:850}
-    .article p{margin:8px 0; color:rgba(255,255,255,.86); line-height:1.6; font-size:15px}
-    .article ul{margin:8px 0 8px 18px; color:rgba(255,255,255,.84); line-height:1.6}
-    .article code{
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-size: 13px;
-      padding:2px 6px; border-radius:10px;
-      background:rgba(255,255,255,.06); border:1px solid var(--border);
-    }
+    /* Notion-ish blocks */
+    .page-title{font-size:34px; font-weight:800; margin:10px 0 6px;}
+    .page-sub{color:var(--muted); font-size:14px; margin:0 0 18px;}
 
-    .callout{
-      margin:14px 0; padding:12px 12px;
+    .toc{
       border:1px solid var(--border);
-      background:rgba(255,255,255,.05);
-      border-radius:14px;
-      display:flex; gap:10px;
+      border-radius:var(--radius);
+      background:var(--surface);
+      padding:12px 12px;
+      margin:10px 0 18px;
     }
-    .emoji{width:22px; text-align:center; flex:0 0 auto}
-    .callout b{color:rgba(255,255,255,.92)}
-    .table{
-      width:100%;
-      border-collapse:separate; border-spacing:0;
-      border:1px solid var(--border);
-      border-radius:14px; overflow:hidden;
-      margin:12px 0;
-      background:rgba(255,255,255,.03);
-    }
-    .table th,.table td{
-      padding:10px 10px;
-      border-bottom:1px solid var(--border);
-      border-right:1px solid var(--border);
-      font-size:13.5px; line-height:1.45;
-      color:rgba(255,255,255,.84);
-      vertical-align:top;
-    }
-    .table th{background:rgba(255,255,255,.05); font-weight:800}
-    .table tr:last-child td{border-bottom:none}
-    .table td:last-child,.table th:last-child{border-right:none}
+    .toc b{display:block; font-size:12px; color:var(--muted); letter-spacing:.2px; text-transform:uppercase; margin-bottom:6px;}
+    .toc a{display:block; color:var(--text); text-decoration:none; padding:6px 8px; border-radius:8px;}
+    .toc a:hover{background:var(--surface2);}
 
-    /* Test cards */
-    .cards{display:grid; gap:12px; margin-top:10px}
+    .section{margin-top:18px;}
+    .section h2{
+      font-size:12px;
+      letter-spacing:.2px;
+      text-transform:uppercase;
+      color:var(--muted);
+      margin:0 0 10px;
+    }
+
     .card{
       border:1px solid var(--border);
-      background:rgba(255,255,255,.045);
-      border-radius:16px;
+      border-radius:var(--radius);
+      background:var(--surface);
       padding:14px;
     }
-    .card.locked{
-      opacity:.55;
-      filter: blur(.2px);
+    .card + .card{margin-top:10px;}
+    .card h3{margin:0 0 8px; font-size:18px;}
+    .card p{margin:8px 0; line-height:1.6; font-size:15px;}
+    .card ul{margin:8px 0 0 18px; line-height:1.6; font-size:15px;}
+
+    .callout{
+      margin-top:10px;
+      border:1px solid var(--border);
+      background:var(--surface2);
+      border-radius:10px;
+      padding:10px 10px;
+      display:flex; gap:10px; align-items:flex-start;
     }
-    .card-head{
+    .emoji{width:22px; flex:0 0 auto; text-align:center;}
+
+    .cta-row{
+      display:flex; justify-content:flex-end; gap:10px;
+      margin-top:12px;
+    }
+    button{
+      appearance:none;
+      border:1px solid var(--border);
+      background:var(--surface);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:10px;
+      font-weight:650;
+      cursor:pointer;
+    }
+    button:hover{background:var(--surface2);}
+    button.primary{
+      border-color:rgba(35,131,226,0.35);
+      background:rgba(35,131,226,0.10);
+      color:#0b57d0;
+    }
+
+    /* Quiz */
+    .quiz-meta{
       display:flex; align-items:center; justify-content:space-between; gap:10px;
-      margin-bottom:8px;
+      margin-bottom:10px;
+      color:var(--muted); font-size:12.5px;
     }
-    .meta{font-size:12.5px; color:var(--muted)}
-    .q{margin:0; font-size:16px; font-weight:850; line-height:1.35}
-    .answers{display:grid; gap:10px; margin-top:10px}
+    .q{margin:0; font-size:16px; font-weight:750; line-height:1.35;}
+
+    .answers{display:grid; gap:8px; margin-top:10px;}
     .ans{
       display:flex; gap:10px; align-items:flex-start;
-      padding:11px 12px;
-      border-radius:14px;
       border:1px solid var(--border);
-      background:rgba(255,255,255,.05);
+      border-radius:10px;
+      padding:10px 10px;
+      background:var(--surface2);
       cursor:pointer;
-      transition:background 120ms ease, border-color 120ms ease;
+      transition: background 120ms ease;
     }
-    .ans:hover{background:rgba(255,255,255,.075)}
-    .radio{margin-top:2px; width:18px; height:18px; border-radius:999px; border:1.5px solid rgba(255,255,255,.35); display:flex; align-items:center; justify-content:center}
-    .dot{width:10px; height:10px; border-radius:999px; background:transparent}
-    .ans.selected{border-color:rgba(139,92,246,.75); background:rgba(139,92,246,.14)}
-    .ans.selected .radio{border-color:rgba(139,92,246,.9)}
-    .ans.selected .dot{background:linear-gradient(90deg, var(--accent), var(--accent2))}
-    .ans.correct{border-color:rgba(34,197,94,.85); background:rgba(34,197,94,.14)}
-    .ans.wrong{border-color:rgba(239,68,68,.85); background:rgba(239,68,68,.12)}
-    .label{font-size:14.8px; line-height:1.35; color:rgba(255,255,255,.9)}
-    .explain{
-      margin-top:10px;
-      padding:11px 12px;
-      border-radius:14px;
-      border:1px solid var(--border);
-      background:rgba(255,255,255,.04);
-      color:rgba(255,255,255,.82);
-      font-size:13.5px; line-height:1.5;
-      display:none;
+    .ans:hover{background:#f3f3f2;}
+    .radio{
+      width:16px; height:16px; border-radius:999px;
+      border:1.5px solid rgba(55,53,47,0.35);
+      margin-top:2px; flex:0 0 auto;
+      position:relative;
     }
-    .explain.show{display:block}
+    .dot{
+      position:absolute; inset:3px;
+      border-radius:999px;
+      background:transparent;
+    }
+    .ans.selected .radio{border-color:rgba(35,131,226,0.65)}
+    .ans.selected .dot{background:rgba(35,131,226,0.85)}
+    .ans.correct{border-color:rgba(15,157,88,0.5); background:rgba(15,157,88,0.08)}
+    .ans.wrong{border-color:rgba(217,48,37,0.5); background:rgba(217,48,37,0.07)}
 
-    .footer-note{margin-top:16px; color:var(--muted); font-size:12.5px; line-height:1.45}
+    .explain{
+      display:none;
+      margin-top:10px;
+      padding:10px 10px;
+      border-radius:10px;
+      border:1px solid var(--border);
+      background:var(--surface2);
+      font-size:13.5px;
+      line-height:1.5;
+    }
+    .explain.show{display:block;}
+
+    .locked{opacity:.55}
+    .endnote{display:none; margin-top:12px; color:var(--muted); font-size:13px;}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="shell">
-      <div class="topbar">
-        <div class="topbar-inner">
-          <div class="brand">
-            <h1 id="lessonTitle">Direct vs Indirect Costs</h1>
-            <p id="lessonSubtitle">Learn → Test (card-by-card) • consistent formatting</p>
-          </div>
-          <div class="pill" id="pill">Test: 0 / 0</div>
-        </div>
-        <div class="progress"><div class="bar" id="bar"></div></div>
+
+  <!-- Sticky top progress (quiz progress updates as you answer) -->
+  <div class="top">
+    <div class="topinner">
+      <div class="title">
+        <b>Direct vs Indirect Costs</b>
+        <span>Learn → Test (cards down the page)</span>
       </div>
-
-      <div class="content">
-        <!-- LEARN -->
-        <section class="section" id="learn">
-          <div class="section-title">
-            <h2>Learn</h2>
-            <div class="actions">
-              <button class="primary" id="toTestBtn" type="button">Start test</button>
-            </div>
-          </div>
-
-          <div class="article" id="learnArticle">
-            <!-- Replace this content with your lesson (copy/paste your own writing) -->
-            <h3>What are direct costs?</h3>
-            <p><b>Direct costs</b> can be traced to a specific cost unit (e.g., one product, one job, one service) with confidence.</p>
-            <div class="callout">
-              <div class="emoji">✅</div>
-              <div><b>Rule of thumb:</b> if you can measure it per unit/job without arbitrary guessing, it’s probably direct.</div>
-            </div>
-
-            <h3>What are indirect costs?</h3>
-            <p><b>Indirect costs</b> support production overall and must be shared (apportioned/absorbed) across cost units.</p>
-            <div class="callout">
-              <div class="emoji">🧠</div>
-              <div><b>Think:</b> “necessary, but not traceable to one unit.”</div>
-            </div>
-
-            <h3>Examples table</h3>
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Cost item</th>
-                  <th>Direct / Indirect</th>
-                  <th>Why</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Raw materials for Product A</td>
-                  <td>Direct</td>
-                  <td>Traceable to each unit produced.</td>
-                </tr>
-                <tr>
-                  <td>Factory rent</td>
-                  <td>Indirect</td>
-                  <td>Supports the whole factory; shared across products.</td>
-                </tr>
-                <tr>
-                  <td>Wages of machine operator working only on Job 17</td>
-                  <td>Direct</td>
-                  <td>Traceable to a specific job.</td>
-                </tr>
-              </tbody>
-            </table>
-
-            <h3>Exam-style tip</h3>
-            <p>If the question is ambiguous, justify your choice using the cost unit. “Direct <i>to what</i>?” is the key phrase.</p>
-          </div>
-
-          <p class="footer-note">
-            Tip: Keep Learn concise; your advantage is the Test + Apply. You can add an “Apply” section later with scenarios and input boxes.
-          </p>
-        </section>
-
-        <!-- TEST -->
-        <section class="section" id="test" style="margin-top:18px;">
-          <div class="section-title">
-            <h2>Test</h2>
-            <div class="actions">
-              <button id="restartBtn" type="button">Restart test</button>
-            </div>
-          </div>
-
-          <div class="cards" id="cards"></div>
-
-          <p class="footer-note" id="endNote" style="display:none;">
-            Finished. You can restart, or scroll back to Learn. (You can also add a results summary card if you want.)
-          </p>
-        </section>
-      </div>
+      <div class="pill" id="pill">Quiz: 0 / 0</div>
     </div>
+    <div class="progress"><div class="bar" id="bar"></div></div>
   </div>
 
-  <script>
-    // =========================
-    // EDIT THESE TWO BLOCKS
-    // =========================
+  <div class="wrap">
+    <div class="page-title">Direct Vs Indirect Costs</div>
+    <div class="page-sub">1.1 — Learn the distinction, then test your understanding.</div>
 
-    const LESSON = {
-      title: "Direct vs Indirect Costs",
-      subtitle: "AAT Level 2 • Clean Learn → Test lesson",
-    };
+    <div class="toc">
+      <b>On this page</b>
+      <a href="#s1">❶ What is a cost?</a>
+      <a href="#s2">❷ Direct costs</a>
+      <a href="#s3">❸ Indirect costs</a>
+      <a href="#s4">❹ Why does the distinction matter?</a>
+      <a href="#test">Test section</a>
+    </div>
 
-    // Question cards down the page (MCQ). correct is index in options array.
-    const QUESTIONS = [
-      {
-        tag: "Definitions",
-        q: "Which statement best describes an indirect cost?",
-        options: [
-          "A cost that can be traced to a specific product unit easily",
-          "A cost that supports overall production and must be shared across cost units",
-          "A cost that is always variable",
-          "A cost that is only found in service businesses"
-        ],
-        correct: 1,
-        explain: "Indirect costs support production overall (e.g., rent, supervision) and are allocated across cost units."
-      },
-      {
-        tag: "Examples",
-        q: "Factory rent is usually classified as:",
-        options: ["Direct material", "Direct labour", "Indirect cost (overhead)", "Selling expense"],
-        correct: 2,
-        explain: "Rent supports the whole factory, so it’s an overhead that must be apportioned/absorbed."
-      },
-      {
-        tag: "Judgement",
-        q: "The phrase that helps you decide whether a cost is direct is:",
-        options: ["Direct means cheap", "Direct to what cost unit?", "Direct means fixed", "Direct means paid weekly"],
-        correct: 1,
-        explain: "Always anchor your answer to the cost unit (a job/product/service)."
-      }
-    ];
+    <!-- LEARN (Notion-like cards) -->
+    <section class="section" id="learn">
+      <h2>Learn</h2>
 
-    // =========================
-    // RENDER + QUIZ LOGIC
-    // =========================
-
-    const el = {
-      lessonTitle: document.getElementById("lessonTitle"),
-      lessonSubtitle: document.getElementById("lessonSubtitle"),
-      pill: document.getElementById("pill"),
-      bar: document.getElementById("bar"),
-      cards: document.getElementById("cards"),
-      toTestBtn: document.getElementById("toTestBtn"),
-      restartBtn: document.getElementById("restartBtn"),
-      endNote: document.getElementById("endNote"),
-    };
-
-    el.lessonTitle.textContent = LESSON.title;
-    el.lessonSubtitle.textContent = LESSON.subtitle;
-
-    let answeredCount = 0;
-    const user = Array(QUESTIONS.length).fill(null);
-    const locked = Array(QUESTIONS.length).fill(true);
-    locked[0] = false; // first card unlocked
-
-    function updateTop(){
-      el.pill.textContent = `Test: ${answeredCount} / ${QUESTIONS.length}`;
-      el.bar.style.width = `${(answeredCount / QUESTIONS.length) * 100}%`;
-    }
-
-    function scrollToCard(i){
-      const card = document.getElementById(`card-${i}`);
-      if (!card) return;
-      card.scrollIntoView({behavior:"smooth", block:"start"});
-    }
-
-    function render(){
-      el.cards.innerHTML = "";
-      el.endNote.style.display = "none";
-      answeredCount = user.filter(v => v !== null).length;
-      updateTop();
-
-      QUESTIONS.forEach((q, i) => {
-        const card = document.createElement("div");
-        card.className = "card" + (locked[i] ? " locked" : "");
-        card.id = `card-${i}`;
-
-        const selected = user[i];
-
-        card.innerHTML = `
-          <div class="card-head">
-            <div class="meta">Question ${i+1} • ${q.tag ?? ""}</div>
-            <div class="meta">${selected === null ? (locked[i] ? "Locked" : "Answer to continue") : "Answered"}</div>
+      <div class="card" id="s1">
+        <h3>❶ What is a cost?</h3>
+        <p>A cost is the value of resources used by a business to produce goods or provide services.</p>
+        <p>Businesses need to understand their costs so they can set prices, control spending, and make informed decisions.</p>
+        <div class="callout">
+          <div class="emoji">📌</div>
+          <div>
+            <b>Examples of common costs:</b>
+            <ul>
+              <li>Materials</li>
+              <li>Wages</li>
+              <li>Rent</li>
+              <li>Utilities (e.g., electricity)</li>
+            </ul>
           </div>
-          <p class="q">${q.q}</p>
-          <div class="answers" id="answers-${i}"></div>
-          <div class="explain" id="explain-${i}"></div>
-        `;
+        </div>
+      </div>
 
-        el.cards.appendChild(card);
+      <div class="card" id="s2">
+        <h3>❷ Direct costs</h3>
+        <p><b>Direct costs</b> are costs that can be linked clearly and directly to a specific product, service, or job.</p>
+        <p>These costs are incurred because the product or job is being made.</p>
+        <div class="callout">
+          <div class="emoji">✅</div>
+          <div>
+            <b>Examples of direct costs:</b>
+            <ul>
+              <li>Raw materials used in production</li>
+              <li>Wages of staff working directly on a job</li>
+              <li>Components used to assemble a product</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="emoji">📈</div>
+          <div><b>Note:</b> direct costs vary with the level of production — more production usually means higher direct costs.</div>
+        </div>
+      </div>
 
-        const answersEl = document.getElementById(`answers-${i}`);
-        const explainEl = document.getElementById(`explain-${i}`);
+      <div class="card" id="s3">
+        <h3>❸ Indirect costs</h3>
+        <p><b>Indirect costs</b> support the business but cannot be traced to one specific product or job.</p>
+        <p>They are shared across multiple activities, departments, or jobs.</p>
+        <div class="callout">
+          <div class="emoji">🏭</div>
+          <div>
+            <b>Examples of indirect costs:</b>
+            <ul>
+              <li>Rent for the building</li>
+              <li>Electricity for the premises</li>
+              <li>Salaries of supervisors or administrative staff</li>
+              <li>Depreciation of machinery</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <div class="emoji">🧊</div>
+          <div><b>Typical behaviour:</b> indirect costs usually stay the same regardless of how many products are made.</div>
+        </div>
+      </div>
 
-        // Build answers
-        q.options.forEach((opt, idx) => {
-          const a = document.createElement("div");
-          a.className = "ans" + (selected === idx ? " selected" : "");
-          a.innerHTML = `
-            <div class="radio"><div class="dot"></div></div>
-            <div class="label">${opt}</div>
-          `;
+      <div class="card" id="s4">
+        <h3>❹ Why does the distinction matter?</h3>
+        <p>It’s important to know whether a cost is direct or indirect because:</p>
+        <ul>
+          <li>Direct costs help calculate the cost of producing each product or job</li>
+          <li>Indirect costs need to be allocated or spread across products</li>
+          <li>Accurate cost classification supports pricing decisions</li>
+          <li>It helps businesses understand profitability and prepare budgets</li>
+        </ul>
+        <div class="callout">
+          <div class="emoji">🎯</div>
+          <div>Understanding this difference is essential for basic costing methods used in accounting.</div>
+        </div>
 
-          a.addEventListener("click", () => {
-            if (locked[i]) return;
-            if (user[i] !== null) return; // already answered (one attempt in this template)
+        <div class="cta-row">
+          <button class="primary" id="startTestBtn" type="button">Start test</button>
+        </div>
+      </div>
+    </section>
 
-            // record
-            user[i] = idx;
-            answeredCount = user.filter(v => v !== null).length;
+    <!-- TEST -->
+    <section class="section" id="test">
+      <h2>Test</h2>
 
-            // mark correct/wrong styles
-            [...answersEl.children].forEach((node, j) => {
-              node.classList.remove("selected");
-              if (j === q.correct) node.classList.add("correct");
-              if (j === idx && idx !== q.correct) node.classList.add("wrong");
-            });
+      <div class="card" style="margin-bottom:12px;">
+        <div class="quiz-meta">
+          <div>Answer each card to unlock the next.</div>
+          <button id="restartBtn" type="button">Restart quiz</button>
+        </div>
+      </div>
 
-            // explanation
-            if (q.explain){
-              explainEl.textContent = q.explain;
-              explainEl.classList.add("show");
-            }
+      <div id="cards"></div>
+      <div class="endnote" id="endnote">Finished — nice. Scroll up to review the Learn section or restart the quiz.</div>
+    </section>
+  </div>
 
-            // unlock next
-            if (i + 1 < QUESTIONS.length){
-              locked[i + 1] = false;
-              render(); // re-render to unlock & update states
-              // scroll to the next newly unlocked card
-              setTimeout(() => scrollToCard(i + 1), 120);
-            } else {
-              updateTop();
-              el.bar.style.width = `100%`;
-              el.endNote.style.display = "block";
-            }
-          });
+<script>
+  // === QUIZ QUESTIONS (edit these as you build the course) ===
+  const QUESTIONS = [
+    {
+      tag: "Basics",
+      q: "A cost is best defined as:",
+      options: [
+        "The price a customer pays for a product",
+        "The value of resources used to produce goods or provide services",
+        "Only the wages paid to staff",
+        "Only the materials used in production"
+      ],
+      correct: 1,
+      explain: "A cost is the value of resources used by a business to produce goods or provide services."
+    },
+    {
+      tag: "Direct costs",
+      q: "Which statement best describes a direct cost?",
+      options: [
+        "Supports the whole business and must be shared across products",
+        "Can be linked clearly and directly to a specific product, service, or job",
+        "Always stays the same regardless of output",
+        "Is only found in manufacturing businesses"
+      ],
+      correct: 1,
+      explain: "Direct costs can be traced clearly to a specific product/service/job."
+    },
+    {
+      tag: "Indirect costs",
+      q: "Which of the following is most likely an indirect cost?",
+      options: [
+        "Raw materials used in production",
+        "Components used to assemble a product",
+        "Rent for the building",
+        "Wages of staff working directly on a job"
+      ],
+      correct: 2,
+      explain: "Rent supports the premises and can’t be traced to one specific product/job, so it’s indirect."
+    },
+    {
+      tag: "Why it matters",
+      q: "Why is classifying costs as direct/indirect important?",
+      options: [
+        "So businesses can avoid paying rent",
+        "Because indirect costs must be allocated/spread across products and accurate classification supports pricing",
+        "So direct costs can be ignored when budgeting",
+        "Because indirect costs are always zero in services"
+      ],
+      correct: 1,
+      explain: "Indirect costs need allocating, and accurate classification supports pricing, profitability, and budgeting."
+    }
+  ];
 
-          answersEl.appendChild(a);
-        });
+  const el = {
+    pill: document.getElementById("pill"),
+    bar: document.getElementById("bar"),
+    cards: document.getElementById("cards"),
+    endnote: document.getElementById("endnote"),
+    startTestBtn: document.getElementById("startTestBtn"),
+    restartBtn: document.getElementById("restartBtn")
+  };
 
-        // If already answered, show state (correct/wrong + explanation)
-        if (selected !== null){
+  const user = Array(QUESTIONS.length).fill(null);
+  const unlocked = Array(QUESTIONS.length).fill(false);
+  unlocked[0] = true;
+
+  function updateProgress(){
+    const done = user.filter(v => v !== null).length;
+    el.pill.textContent = `Quiz: ${done} / ${QUESTIONS.length}`;
+    el.bar.style.width = `${(done / QUESTIONS.length) * 100}%`;
+  }
+
+  function scrollToCard(i){
+    const node = document.getElementById(`q-${i}`);
+    if (node) node.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  function render(){
+    el.cards.innerHTML = "";
+    el.endnote.style.display = "none";
+
+    QUESTIONS.forEach((q, i) => {
+      const card = document.createElement("div");
+      card.className = "card" + (unlocked[i] ? "" : " locked");
+      card.id = `q-${i}`;
+
+      card.innerHTML = `
+        <div class="quiz-meta">
+          <div>${q.tag ? q.tag + " • " : ""}Question ${i+1} of ${QUESTIONS.length}</div>
+          <div>${unlocked[i] ? (user[i]===null ? "Answer to continue" : "Answered") : "Locked"}</div>
+        </div>
+        <p class="q">${q.q}</p>
+        <div class="answers" id="a-${i}"></div>
+        <div class="explain" id="e-${i}"></div>
+      `;
+
+      el.cards.appendChild(card);
+
+      const answersEl = document.getElementById(`a-${i}`);
+      const explainEl = document.getElementById(`e-${i}`);
+
+      q.options.forEach((opt, idx) => {
+        const a = document.createElement("div");
+        a.className = "ans";
+        a.innerHTML = `<div class="radio"><div class="dot"></div></div><div class="label">${opt}</div>`;
+
+        a.addEventListener("click", () => {
+          if (!unlocked[i]) return;
+          if (user[i] !== null) return; // one attempt per card in this version
+
+          user[i] = idx;
+
+          // mark correct/wrong
           [...answersEl.children].forEach((node, j) => {
-            node.classList.remove("selected");
             if (j === q.correct) node.classList.add("correct");
-            if (j === selected && selected !== q.correct) node.classList.add("wrong");
+            if (j === idx && idx !== q.correct) node.classList.add("wrong");
+            if (j === idx) node.classList.add("selected");
           });
+
           if (q.explain){
             explainEl.textContent = q.explain;
             explainEl.classList.add("show");
           }
-        }
+
+          // unlock next + move down
+          if (i + 1 < QUESTIONS.length){
+            unlocked[i+1] = true;
+            updateProgress();
+            render();
+            setTimeout(() => scrollToCard(i+1), 140);
+          } else {
+            updateProgress();
+            el.bar.style.width = "100%";
+            el.endnote.style.display = "block";
+          }
+        });
+
+        answersEl.appendChild(a);
       });
 
-      updateTop();
-    }
-
-    function restart(){
-      for (let i=0;i<user.length;i++) user[i] = null;
-      for (let i=0;i<locked.length;i++) locked[i] = true;
-      locked[0] = false;
-      render();
-      scrollToCard(0);
-    }
-
-    el.toTestBtn.addEventListener("click", () => {
-      document.getElementById("test").scrollIntoView({behavior:"smooth", block:"start"});
-      // Optionally scroll to first card
-      setTimeout(() => scrollToCard(0), 150);
+      // re-apply answered styling after re-render
+      if (user[i] !== null){
+        [...answersEl.children].forEach((node, j) => {
+          if (j === q.correct) node.classList.add("correct");
+          if (j === user[i] && user[i] !== q.correct) node.classList.add("wrong");
+          if (j === user[i]) node.classList.add("selected");
+        });
+        if (q.explain){
+          explainEl.textContent = q.explain;
+          explainEl.classList.add("show");
+        }
+      }
     });
 
-    el.restartBtn.addEventListener("click", restart);
+    updateProgress();
+  }
 
+  function restart(){
+    for (let i=0;i<user.length;i++) user[i]=null;
+    for (let i=0;i<unlocked.length;i++) unlocked[i]=false;
+    unlocked[0]=true;
     render();
-  </script>
+    scrollToCard(0);
+  }
+
+  el.startTestBtn.addEventListener("click", () => {
+    document.getElementById("test").scrollIntoView({behavior:"smooth", block:"start"});
+    setTimeout(() => scrollToCard(0), 150);
+  });
+
+  el.restartBtn.addEventListener("click", restart);
+
+  render();
+</script>
 </body>
 </html>
+
 
